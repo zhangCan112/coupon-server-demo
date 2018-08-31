@@ -1,0 +1,21 @@
+{
+  "name": "session",
+  "script": "app.js",
+  "error_file": "./logs/stderr.log",
+  "out_file": "./logs/stdout.log",
+  "trace_file": "./logs/stdtrace.log",
+  "log_date_format": "YYYY-MM-DD HH:mm Z",
+  "merge_logs": true,
+  "cwd": "./",
+  "exec_mode": "fork",
+  "watch": true,
+  "ignore_watch": [
+    "tmp"
+  ],
+  "env": {
+    "NODE_ENV": "production"
+  },
+  "engines": {
+    "node": ">=7.6"
+  }
+}
