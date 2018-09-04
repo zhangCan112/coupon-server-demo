@@ -13,6 +13,7 @@
   "author": "Jason",
   "license": "MIT",
   "dependencies": {
+    "@xsy-customize/common-middlewares": "^1.0.6",
     "@xsy-customize/logger": "^1.0.0",
     "axios": "^0.15.3",
     "knex": "^0.13.0",
@@ -23,7 +24,8 @@
     "lodash": "^4.17.4",
     "mkdir-p": "0.0.7",
     "mysql": "^2.16.0",
-    "pify": "^2.3.0"
+    "pify": "^2.3.0",
+    "shortid": "^2.2.13"
   },
   "devDependencies": {
     "babel-eslint": "^7.1.0",

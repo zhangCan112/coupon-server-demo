@@ -23,7 +23,9 @@ SET FOREIGN_KEY_CHECKS = 0;
 CREATE TABLE IF NOT EXISTS `coupon-pool` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `tenant_id` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '租户id',
-  `coupon-code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '劵码',
+  `coupon_code` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '劵码',
+  `coupon_type` int(11) DEFAULT NULL COMMENT '电子劵类型',
+  `coupon_type_name` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '电子劵发型名称',
   `name` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '' COMMENT '劵面名称',
   `face_value` int(100) NOT NULL DEFAULT '0' COMMENT '面值',
   `description` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '使用说明',
@@ -37,7 +39,8 @@ CREATE TABLE IF NOT EXISTS `coupon-pool` (
   `write_of_contact` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '核销联系人',
   `status` int(2) DEFAULT NULL COMMENT '状态',
   `comment` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注',
-  PRIMARY KEY (`id`)  
+  PRIMARY KEY (`id`),
+  UNIQUE KEY `coupon-code` (`coupon_code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='优惠卷池';
 
 SET FOREIGN_KEY_CHECKS = 1;
