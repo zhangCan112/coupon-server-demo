@@ -7,6 +7,25 @@ const DBERR = {
   ERR_WHEN_GET_FROM_DB: 'ERR_WHEN_GET_FROM_DB'
 }
 
+const mapKey = data => {
+  let newData = {}
+  for (let key in data) {
+    let value = data[key]
+    let oldKeyCompoments = key.split('.')
+    let newKey = oldKeyCompoments[oldKeyCompoments.length - 1]
+    let newKeyCompoments = newKey.split('_')
+    newKey = newKeyCompoments.map((value, index) => {
+      if (index == 0) {
+        return value
+      } else {
+        return value.replace(/.{1,1}/, value.substring(0, 1).toUpperCase())
+      }
+    }).join('')
+    newData[newKey] = value
+  }
+  return newData
+}
+
 /**
  * 通过领取人查询已领取的优惠劵
  * @param {string} tenant_id
@@ -18,14 +37,14 @@ const couponsByReceivedCustomer = async (tenant_id, received_customer, couponSta
   let sql = mysql('coupon-pool').select('*').where({tenant_id, received_customer})
   switch (couponStatus) {
     case '0':
-      return sql.andWhere({is_write_off: 0})
+      return sql.andWhere({is_write_off: 0}).then((res) => res.map(mapKey))
       break;
     case '1':
-      return sql.andWhere({is_write_off: 1})
+      return sql.andWhere({is_write_off: 1}).then((res) => res.map(mapKey))
       break;
     case '2':
       let dateTime = new Date().getTime()
-      return sql.andWhere('effective_end_date', '<', dateTime)
+      return sql.andWhere('effective_end_date', '<', dateTime).then((res) => res.map(mapKey))
       break;
     default:
       break;
@@ -44,7 +63,7 @@ const couponByCode = async (tenant_id, coupon_code) => {
   return mysql('coupon-pool').select('*').where({tenant_id, coupon_code}).then((dataArray) => {
     let data = dataArray[0]
     if (data) {
-      return data
+      return mapKey(data)
     }
     return {}
   })
@@ -56,7 +75,12 @@ const couponByCode = async (tenant_id, coupon_code) => {
  * @return {Array}
  */
 const claimCoupons = async (tenant_id) => {
-  return mysql('coupon-pool').distinct('tenant_id', 'coupon_type', 'coupon_type_name', 'name', 'face_value', 'description', 'effective_start_date', 'effective_end_date').where({is_received: 0, tenant_id}).select().catch(e => {
+  return mysql('coupon-pool')
+  .distinct('tenant_id', 'coupon_type', 'coupon_type_name', 'name', 'face_value', 'description', 'effective_start_date', 'effective_end_date')
+  .where({is_received: 0, tenant_id})
+  .select()
+  .then((res) => res.map(mapKey))
+  .catch(e => {
     throw new Error(`${DBERR.ERR_WHEN_GET_FROM_DB}\n${e}`)
   })
 }
@@ -120,7 +144,7 @@ const receivedCouponByType = (tenant_id, coupon_type, received_customer) => {
     if (e.code) {
       throw e
     } else {
-        throw new Error(`${DBERR.ERR_WHEN_INSERT_TO_DB}\n${e}`)
+      throw new Error(`${DBERR.ERR_WHEN_INSERT_TO_DB}\n${e}`)
     }
 
   })
