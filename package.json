@@ -13,7 +13,7 @@
   "author": "Jason",
   "license": "MIT",
   "dependencies": {
-    "@xsy-customize/common-middlewares": "^1.0.6",
+    "@xsy-customize/common-middlewares": "^1.0.7",
     "@xsy-customize/logger": "^1.0.0",
     "axios": "^0.15.3",
     "knex": "^0.13.0",

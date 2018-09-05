@@ -131,13 +131,11 @@ const receivedCouponByType = (tenant_id, coupon_type, received_customer) => {
           })
         } else {
           let error = new Error(`优惠券已经被领光了！`)
-          error.code = -1;
           throw error
         }
       })
     } else {
-      let error = new Error(`优惠券领过了，不能重复领取！`)
-      error.code = -1;
+      let error = new Error(`优惠券领过了，不能重复领取！`)      
       throw error
     }
   }).catch(e => {
