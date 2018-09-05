@@ -3,5 +3,6 @@ const claimCoupons = require('../tools/dbservice').querry.claimCoupons
 
 module.exports = async (ctx, next) => {
   let tenantId = ctx.query['tenantId']
-  ctx.state.data = await claimCoupons(tenantId)
+  let customerId = ctx.query['customerId']
+  ctx.state.data = await claimCoupons(tenantId, customerId)
 }

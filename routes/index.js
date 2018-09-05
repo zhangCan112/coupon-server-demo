@@ -17,7 +17,7 @@ const post = paramCheckMaker.post
 router.get('/loadBullet', controllers.loadBullet)
 
 ///查询待领取的优惠券列表
-router.get('/claimCoupons', query('tenantId'), controllers.claimCoupons)
+router.get('/claimCoupons', query('tenantId', 'customerId'), controllers.claimCoupons)
 ///领取优惠券
 router.get('/receivedCoupon', query('tenantId', 'couponType', 'customerId'), controllers.receivedCoupon)
 ///查看卡券包列表

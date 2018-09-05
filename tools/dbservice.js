@@ -74,15 +74,36 @@ const couponByCode = async (tenant_id, coupon_code) => {
  * @param {string} tenant_id
  * @return {Array}
  */
-const claimCoupons = async (tenant_id) => {
-  return mysql('coupon-pool')
-  .distinct('tenant_id', 'coupon_type', 'coupon_type_name', 'name', 'face_value', 'description', 'effective_start_date', 'effective_end_date')
-  .where({is_received: 0, tenant_id})
-  .select()
-  .then((res) => res.map(mapKey))
-  .catch(e => {
-    throw new Error(`${DBERR.ERR_WHEN_GET_FROM_DB}\n${e}`)
-  })
+const claimCoupons = async (tenant_id, received_customer) => {
+
+  let totalClaimCoupons = await  mysql('coupon-pool')
+ .distinct('tenant_id', 'coupon_type', 'coupon_type_name', 'name', 'face_value', 'description', 'effective_start_date', 'effective_end_date')
+ .where({is_received: 0, tenant_id})
+ .select().catch(e => {
+   throw new Error(`${DBERR.ERR_WHEN_GET_FROM_DB}\n${e}`)
+ })
+
+ let receiedClaimCoupons = await  mysql('coupon-pool')
+.distinct('tenant_id', 'coupon_type', 'coupon_type_name', 'name', 'face_value', 'description', 'effective_start_date', 'effective_end_date')
+.where({tenant_id, received_customer})
+.select().catch(e => {
+  throw new Error(`${DBERR.ERR_WHEN_GET_FROM_DB}\n${e}`)
+})
+console.log("=====>totalClaimCoupons")
+console.log(totalClaimCoupons)
+console.log(receiedClaimCoupons)
+
+let result = totalClaimCoupons.filter((item) => {
+  for (let i=0; i<receiedClaimCoupons.length; i++) {
+    let receied = receiedClaimCoupons[i];
+    if (item.coupon_type == receied.coupon_type) {
+      return false
+    }
+  }
+  return true
+})
+
+  return result.map(mapKey)
 }
 
 let querry = {
@@ -135,16 +156,9 @@ const receivedCouponByType = (tenant_id, coupon_type, received_customer) => {
         }
       })
     } else {
-      let error = new Error(`优惠券领过了，不能重复领取！`)      
+      let error = new Error(`优惠券领过了，不能重复领取！`)
       throw error
     }
-  }).catch(e => {
-    if (e.code) {
-      throw e
-    } else {
-      throw new Error(`${DBERR.ERR_WHEN_INSERT_TO_DB}\n${e}`)
-    }
-
   })
 }
 
