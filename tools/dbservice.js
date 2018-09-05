@@ -35,16 +35,16 @@ const mapKey = data => {
  */
 const couponsByReceivedCustomer = async (tenant_id, received_customer, couponStatus) => {
   let sql = mysql('coupon-pool').select('*').where({tenant_id, received_customer})
+  let dateTime = new Date().getTime()
   switch (couponStatus) {
     case '0':
-      return sql.andWhere({is_write_off: 0}).then((res) => res.map(mapKey))
+      return sql.andWhere({is_write_off: 0}).andWhere('effective_end_date', '>', dateTime).then((res) => res.map(mapKey))
       break;
     case '1':
       return sql.andWhere({is_write_off: 1}).then((res) => res.map(mapKey))
       break;
-    case '2':
-      let dateTime = new Date().getTime()
-      return sql.andWhere('effective_end_date', '<', dateTime).then((res) => res.map(mapKey))
+    case '2':      
+      return sql.andWhere({is_write_off: 0}).andWhere('effective_end_date', '<', dateTime).then((res) => res.map(mapKey))
       break;
     default:
       break;
