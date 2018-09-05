@@ -42,19 +42,19 @@ const template03 = (tenant_id) => {
 const template04 = (tenant_id) => {
   let start = (new Date("2018-09-3 00:00:00")).getTime()
   let end = (new Date("2018-10-03 00:00:00")).getTime()
-  return templateMaker(tenant_id, 4, '优惠券', '店铺优惠券', 50, '全店通用，买家购买全店商品凭劵抵扣现金', start, end)
+  return templateMaker(tenant_id, 4, '优惠券', '店铺优惠券', 30, '全店通用，买家购买全店商品凭劵抵扣现金', start, end)
 }
 
 const template05 = (tenant_id) => {
   let start = (new Date("2018-09-3 00:00:00")).getTime()
   let end = (new Date("2018-10-03 00:00:00")).getTime()
-  return templateMaker(tenant_id, 5, '优惠券', '家电优惠券', 50, '买家购买家电类产品，凭劵抵扣现金', start, end)
+  return templateMaker(tenant_id, 5, '优惠券', '家电优惠券', 200, '买家购买家电类产品，凭劵抵扣现金', start, end)
 }
 
 const template06 = (tenant_id) => {
   let start = (new Date("2018-09-3 00:00:00")).getTime()
   let end = (new Date("2018-10-03 00:00:00")).getTime()
-  return templateMaker(tenant_id, 6, '优惠券', '店庆优惠劵', 50, '仅限店庆当日使用，凭劵抵扣现金', start, end)
+  return templateMaker(tenant_id, 6, '优惠券', '店庆优惠劵', 99, '仅限店庆当日使用，凭劵抵扣现金', start, end)
 }
 
 
