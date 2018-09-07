@@ -38,14 +38,12 @@ const couponsByReceivedCustomer = async (tenant_id, received_customer, couponSta
   let dateTime = new Date().getTime()
   switch (couponStatus) {
     case '0':
-      return sql.andWhere({is_write_off: 0}).andWhere('effective_end_date', '>', dateTime).then((res) => res.map(mapKey))
-      break;
+      return sql.andWhere({is_write_off: 0}).then((res) => res.map(mapKey))
     case '1':
       return sql.andWhere({is_write_off: 1}).then((res) => res.map(mapKey))
-      break;
-    case '2':      
-      return sql.andWhere({is_write_off: 0}).andWhere('effective_end_date', '<', dateTime).then((res) => res.map(mapKey))
-      break;
+    case '2':
+      let dateTime = new Date().getTime()
+      return sql.andWhere('effective_end_date', '<', dateTime).then((res) => res.map(mapKey))
     default:
       break;
 
@@ -61,6 +59,47 @@ const couponsByReceivedCustomer = async (tenant_id, received_customer, couponSta
  */
 const couponByCode = async (tenant_id, coupon_code) => {
   return mysql('coupon-pool').select('*').where({tenant_id, coupon_code}).then((dataArray) => {
+    let data = dataArray[0]
+    if (data) {
+      return mapKey(data)
+    }
+    return {}
+  })
+}
+
+
+/**
+ * 查询终端下核销的
+ */
+const couponByTerminalId = async (tenant_id,terminalId) => {
+  return mysql('coupon-pool').select('*').where({tenant_id,terminal_id:terminalId,is_write_off:1}).then((dataArray) => {
+    if (dataArray) {
+      return dataArray.map(mapKey)
+    }
+    return [];
+  })
+}
+
+/**
+ * 查询谁核销的
+ */
+const couponByWriteOfContact = async (tenant_id,contactId) => {
+  return mysql('coupon-pool').select('*').where({tenant_id,write_of_contact:contactId,is_write_off:1}).then((dataArray) => {
+    if (dataArray) {
+      return dataArray.map(mapKey)
+    }
+    return [];
+  })
+}
+
+/**
+ * 通过优惠券ID查询
+ * @param {string} tenant_id
+ * @param {string} coupon_code
+ * @return {Object}
+ */
+const couponById = async (tenant_id, id) => {
+  return mysql('coupon-pool').select('*').where({tenant_id, id}).then((dataArray) => {
     let data = dataArray[0]
     if (data) {
       return mapKey(data)
@@ -89,9 +128,6 @@ const claimCoupons = async (tenant_id, received_customer) => {
 .select().catch(e => {
   throw new Error(`${DBERR.ERR_WHEN_GET_FROM_DB}\n${e}`)
 })
-console.log("=====>totalClaimCoupons")
-console.log(totalClaimCoupons)
-console.log(receiedClaimCoupons)
 
 let result = totalClaimCoupons.filter((item) => {
   for (let i=0; i<receiedClaimCoupons.length; i++) {
@@ -109,7 +145,10 @@ let result = totalClaimCoupons.filter((item) => {
 let querry = {
   couponsByReceivedCustomer,
   couponByCode,
-  claimCoupons
+  claimCoupons,
+  couponById,
+  couponByWriteOfContact,
+  couponByTerminalId
 }
 
 /**
@@ -162,9 +201,27 @@ const receivedCouponByType = (tenant_id, coupon_type, received_customer) => {
   })
 }
 
+/**
+ * 更新优惠券信息
+ */
+const updateCouponById = async (tenant_id, id, updateData) => {
+  await mysql('coupon-pool').update(updateData).where({
+    id,
+    tenant_id
+  }).then(res => {
+    return {
+      code:0,
+      msg:'更新成功'
+    }
+  }).catch(e => {
+    throw new Error(`更新优惠券错误`)
+  })
+}
+
 let opt = {
   addBatchedCoupon,
-  receivedCouponByType
+  receivedCouponByType,
+  updateCouponById
 }
 
 module.exports = {

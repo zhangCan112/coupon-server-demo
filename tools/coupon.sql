@@ -37,6 +37,7 @@ CREATE TABLE IF NOT EXISTS `coupon-pool` (
   `is_write_off` int(1) NOT NULL DEFAULT '0' COMMENT '是否核销',
   `write_of_date` bigint(20) DEFAULT NULL COMMENT '核销日期',
   `write_of_contact` varchar(100) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '核销联系人',
+  `terminal_id` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '核销终端ID',
   `status` int(2) DEFAULT NULL COMMENT '状态',
   `comment` varchar(300) COLLATE utf8mb4_unicode_ci DEFAULT NULL COMMENT '备注',
   PRIMARY KEY (`id`),
