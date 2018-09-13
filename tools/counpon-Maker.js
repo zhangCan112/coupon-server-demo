@@ -1,11 +1,10 @@
 
 const shortid = require('shortid')
-const cryptoUtil = require('./cryptoUtil')
 
 const templateMaker =  (tenant_id, coupon_type, coupon_type_name, name, face_value, description, effective_start_date, effective_end_date) => {
   //coupon_code规则： MD16（租户id+counpon_type+当前时间戳+shortid）
   let sid = shortid.generate()
-  let coupon_code =  cryptoUtil.md5_16(tenant_id + coupon_type + Date.now().toString(10) +  sid) + ''
+  let coupon_code =  tenant_id + coupon_type + Date.now().toString(10) +  sid + ''
   coupon_code = coupon_code.substring(coupon_code.length - 11, coupon_code.length)
   return {
     tenant_id,
